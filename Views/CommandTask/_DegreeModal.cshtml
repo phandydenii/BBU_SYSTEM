@@ -1,8 +1,29 @@
-@model TModel
-
-@{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
-}
-
-<h2>title</h2>
+@model BBU_SYSTEM.DTO.DegreeDto
+<div class="modal fade" id="DegreeModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Degree</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Degree" method="post">
+                    <input type="hidden" asp-for="degree_id" id="degree_id"/>
+                    <div class="form-group">
+                        <label>From Date:</label>
+                        <input type="text" asp-for="degree" id="degree_name" class="form-control">
+                        <span asp-validation-for="degree" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>To Date:</label>
+                        <input type="text" asp-for="degree_in_khmer" id="degree_name_kh" class="form-control">
+                        <span asp-validation-for="degree_in_khmer" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-sm">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

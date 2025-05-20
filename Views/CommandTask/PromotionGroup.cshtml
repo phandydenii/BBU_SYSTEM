@@ -1,0 +1,123 @@
+@model BBU_SYSTEM.ViewModel.StudentViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Promotion and Group</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <table id="tblDegree" class="table table-bordered table-striped" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table id="tblSchool" class="table table-bordered table-hover dataTable dtr-inline" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                @* <th>Name Khmer</th> *@
+                                @* <th>Action</th> *@
+                            </tr>
+                            </thead>
+                            <tbody> 
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table id="tblPromotion" class="table table-bordered table-striped" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                @* <th>Name Khmer</th> *@
+                                @* <th>Action</th> *@
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+<script src="~/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+<script>
+    const degrees = @Html.Raw(Json.Serialize(Model.degrees));
+    const schools = @Html.Raw(Json.Serialize(Model.schools));
+    const fields = @Html.Raw(Json.Serialize(Model.fields));
+    const groups = @Html.Raw(Json.Serialize(Model.groups));
+    const promotions = @Html.Raw(Json.Serialize(Model.promotions));
+    $(document).ready(function () {
+        fetchDegree();
+        fetchSchool();
+        fetchPromotion();
+    });
+    function fetchDegree() {
+        $("#tblDegree")
+            .DataTable({
+                responsive: true,
+                lengthChange: true,
+                info: false,
+                autoWidth: true,
+                data: degrees,
+                columns: [
+                    { data: "degree_id" },
+                    { data: "degree" },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `<a class="btn btn-warning btn-sm"> View</a>`;
+                        }
+
+                    }
+                ]
+            })
+    }
+    function fetchSchool() {
+        $("#tblSchool")
+            .DataTable({
+                responsive: true,
+                lengthChange: true,
+                info: false,
+                autoWidth: true,
+                data: schools,
+                columns: [
+                    { data: "school_id" },
+                    { data: "school_name" },
+                ]
+            })
+    }
+    function fetchPromotion() {
+        $("#tblPromotion")
+            .DataTable({
+                responsive: true,
+                lengthChange: true,
+                info: false,
+                autoWidth: true,
+                data: promotions,
+                columns: [
+                    { data: "promotion_id" },
+                    { data: "promotion_no" },
+                ]
+            })
+    }
+</script>
+    

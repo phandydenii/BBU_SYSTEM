@@ -1,0 +1,107 @@
+
+@{
+    ViewData["Title"] = "Index";
+}
+@if (TempData["Message"] != null)
+{
+    var msg = @Html.Raw(Json.Serialize(TempData["Message"]));
+    var isSuccess = Json.Serialize(TempData["IsSuccess"]);
+    <p>@msg</p>
+    <script>
+        alert(@msg);
+    </script>
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Degree</h3>
+                <button type="submit" class="btn btn-success btn-sm float-right" data-toggle="modal"
+                        data-target="#DegreeModal">
+                    Add New
+                </button>
+            </div>
+            <div class="card-body">
+                <table id="tblDegree" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Name Khmer</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_DegreeModal" />
+}
+<script>
+    const data = @Html.Raw(Json.Serialize(Model));
+    function fetchDegree() {
+        $("#tblDegree").DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "/CommandTask/GetDegreeList",
+                type: "POST"
+            },
+            columns: [
+                {data: "degree_id"},
+                {data: "degree"},
+                {data: "degree_in_khmer"},
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `
+                        <div class="input-group-prepend">
+                            <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
+                                Action
+                            </button>
+                            <div class="dropdown-menu" style="min-width: 8rem;">
+                                <div class="col-md-12">
+                                    <a onclick="OnEdit('${row.degree_id}')" class="btn btn-success btn-sm" style="display: block;margin:.2rem 0rem">Edit</a>
+                                    <a class="btn btn-warning btn-sm" style="display: block;margin:.2rem 0rem">View</a>
+                                    <a class="btn btn-danger btn-sm" style="display: block;margin:.2rem 0rem">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    }
+                }
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        fetchDegree();
+    });
+
+    function OnEdit(id) {
+        $.ajax({
+            url: `/api/mis/${campus()}/degrees/${id}`,
+            type: "GET",
+            dataSrc: "data",
+            success: function (data) {
+                const dt = data["data"];
+                console.log(dt);
+                $('#degree_id').val(dt["degree_id"]);
+                $('#degree_name').val(dt["degree"]);
+                $('#degree_name_kh').val(dt["degree_in_khmer"]);
+                $('#DegreeModal').modal('show');
+            },
+            error: function (error) {
+                console.error('Error fetching degree:', error);
+                alert('Failed to load degree info');
+            }
+        });
+    }
+</script>

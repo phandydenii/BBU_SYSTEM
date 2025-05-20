@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Branch</h3>
+            </div>
+            <div class="card-body">
+                <table id="tblStudent" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Name Khmer</th>
+                            <th>School</th>
+                            <th>Degree</th>
+                            <th>Degree Name</th>
+                            <th>Degree Name Khmer</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#tblStudent")
+            .DataTable({
+                responsive: true,
+                lengthChange: true,
+                autoWidth: true,
+                ajax: {
+                    url: `/api/mis/${campus()}/fields`,
+                    type: "GET",
+                    dataSrc: "data",
+                },
+                columns: [
+                    { data: "field_id" },
+                    { data: "field_name" },
+                    { data: "field_name_in_khmer" },
+                    { data: "school_id" },
+                    { data: "degree_id" },
+                    { data: "degree_name" },
+                    { data: "degree_name_in_khmer" },
+                    { data: "type" },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu" style="min-width: 8rem;">
+                                    <div class="col-md-12">
+                                        <a onclick="OnEdit('${row.student_id}')" class="btn btn-success btn-sm" style="display: block;margin:.2rem 0rem">Edit</a>
+                                         <a class="btn btn-warning btn-sm" style="display: block;margin:.2rem 0rem">View</a>
+                                        <a class="btn btn-danger btn-sm" style="display: block;margin:.2rem 0rem">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }
+
+                    }
+                ]
+            })
+            .buttons()
+            .container()
+            .appendTo("#example1_wrapper .col-md-6:eq(0)");
+    });</script>

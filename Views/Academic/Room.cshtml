@@ -1,0 +1,48 @@
+﻿@model BBU_SYSTEM.ViewModel.StudentViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Student</h3>
+            </div>
+            <div class="card-body">
+                <table id="tblStudent" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th>Student Id</th>
+                        <th>Name English</th>
+                        <th>Name Khmer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+<script>
+    function fetchStudent() {
+        $("#tblStudent").DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "/Academic/GetStudentList", // Endpoint to fetch paginated data
+                type: "POST"
+            },
+            columns: [
+                {data: "student_id"},
+                {data: "student_name"},
+                {data: "student_name_in_khmer"}
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        fetchStudent();
+    });
+</script>

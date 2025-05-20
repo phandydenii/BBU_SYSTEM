@@ -1,0 +1,236 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Field Certificate</h3>
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#editModal" >Add New</button>
+            </div>
+            <div class="card-body">
+                <table id="tblStudent" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            @*<th>Degree Id</th>*@
+                            <th>Degree</th>
+                            <th>Degree Khmer</th>
+                            @*<th>School Id</th>*@
+                            <th>Schoo</th>
+                            <th>SchoolKhmer</th>
+                            @*<th>Field Id</th>*@
+                            <th>Field</th>
+                            <th>Field Khmer</th>
+                            <th>Promotion</th>
+                            <th>Statas</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+             <div class="modal-header">
+                    <h4 class="modal-title">Default Modal</h4>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+                </div> 
+            <div class="modal-body">
+                @* ======Body===== *@
+                <div class="row">
+                    <div class="col-12">
+                        <label>Degree</label>
+                        <select id="cboDegree" class="form-control select2" style="width: 100%;" onchange="OnChangeDegree()">
+                            <option selected="selected" disabled value="">Select Degree</option>
+                        </select>
+                        <label>School</label>
+                        <select id="cboSchool" class="form-control select2" style="width: 100%;" onchange="OnChangeScool()">
+                            <option selected="selected" disabled value="">Select School</option>
+                        </select>
+                        <label>Field</label>
+                        <select id="cboField" class="form-control select2" style="width: 100%;">
+                            <option selected="selected" disabled value="">Select Field</option>
+                        </select>
+                        <label>Promotion</label>
+                        <select id="cboPromotion" class="form-control select2" style="width: 100%;">
+                            <option selected="selected" disabled value="">Select Promotion</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" >Update</button>
+                <button type="button" class="btn btn-danger" onclick="OnCloseModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/AdminLTE/plugins/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        fetchFieldCertificate();
+        fetchDegree();
+        fetchSchool();
+        //fetchField();
+    });
+    
+    function fetchDegree() {
+        $.ajax({
+            url: `/api/mis/${campus()}/degrees`,
+            type: 'GET',
+            dataSrc: "data",
+            success: function (data) {
+                const dropdown = document.getElementById("cboDegree");
+                data["data"].forEach(degree => {
+                    const option = document.createElement("option");
+                    option.value = degree.degree_id;
+                    option.text = degree.degree;
+                    dropdown.appendChild(option);
+                });
+            },
+            error: function () {
+                alert("Failed to load degrees.");
+            }
+        });
+    }
+    function fetchSchool() {
+        $.ajax({
+            url: `/api/mis/${campus()}/schools`,
+            type: 'GET',
+            dataSrc: "data",
+            success: function (data) {
+                const dropdown = document.getElementById("cboSchool");
+                data["data"].forEach(row => {
+                    const option = document.createElement("option");
+                    option.value = row.school_id;
+                    option.text = row.school_name;
+                    dropdown.appendChild(option);
+                });
+            },
+            error: function () {
+                alert("Failed to load degrees.");
+            }
+        });
+    }
+    function fetchField(degreeid, schoolid) {
+        $.ajax({
+            url: `/api/mis/${campus()}/fields`,
+            type: 'GET',
+            dataSrc: "data",
+            success: function (data) {
+                $('#cboField option').remove();
+                const dropdown = document.getElementById("cboField");
+                data["data"].forEach(row => {
+                    if (row.degree_id == degreeid && row.school_id == schoolid) {
+                        const option = document.createElement("option");
+                        option.value = row.field_id;
+                        option.text = row.field_name;
+                        dropdown.appendChild(option);
+                    }
+                });
+            },
+            error: function () {
+                alert("Failed to load degrees.");
+            }
+        });
+    }
+    function fetchPromotion(degreeid, schoolid) {
+        $.ajax({
+            url: `/api/mis/${campus()}/promotions`,
+            type: 'GET',
+            dataSrc: "data",
+            success: function (data) {
+                $('#cboPromotion option').remove();
+                const dropdown = document.getElementById("cboPromotion");
+                data["data"].forEach(row => {
+                    if (row.degree_id == degreeid && row.school_id == schoolid) {
+                        const option = document.createElement("option");
+                        option.value = row.promotion_id;
+                        option.text = row.promotion_no;
+                        dropdown.appendChild(option);
+                    }
+                });
+            },
+            error: function () {
+                alert("Failed to load degrees.");
+            }
+        });
+    }
+    function OnChangeScool() {
+        const cboDegree = $("#cboDegree").val();
+        const cboSchool = $("#cboSchool").val();
+        fetchField(cboDegree, cboSchool);
+        fetchPromotion(cboDegree, cboSchool);
+    }
+    function OnChangeDegree() {
+        
+    }
+    function fetchFieldCertificate() {
+        $("#tblStudent")
+            .DataTable({
+                responsive: true,
+                lengthChange: true,
+                autoWidth: true,
+                ajax: {
+                    url: `/api/mis/${campus()}/field-certificate`,
+                    type: "GET",
+                    dataSrc: "data",
+                },
+                columns: [
+                    { data: "id" },
+                    //{ data: "degree_id" },
+                    { data: "degree_name" },
+                    { data: "degree_name_khmer" },
+                    //{ data: "school_id" },
+                    { data: "school_name" },
+                    { data: "school_name_khmer" },
+                    //{ data: "field_id" },
+                    { data: "field_name" },
+                    { data: "field_name_khmer" },
+                    { data: "promotion_no" },
+                    { data: "status" },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu" style="min-width: 8rem;">
+                                    <div class="col-md-12">
+                                        <a onclick="OnEdit('${row.student_id}')" class="btn btn-success btn-sm" style="display: block;margin:.2rem 0rem">Edit</a>
+                                         <a class="btn btn-warning btn-sm" style="display: block;margin:.2rem 0rem">View</a>
+                                        <a class="btn btn-danger btn-sm" style="display: block;margin:.2rem 0rem">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }
+
+                    }
+                ]
+            })
+            .buttons()
+            .container()
+            .appendTo("#example1_wrapper .col-md-6:eq(0)");
+    }
+    function OnCloseModal() {
+        $("#editModal").modal("hide");
+        $("#cboDegree").val("");
+        $("#cboSchool").val("");
+        $("#cboField").val("");
+        $("#cboPromotion").val("");
+    }
+</script>
